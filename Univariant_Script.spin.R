@@ -63,16 +63,3 @@ barplot(format_freq,
 
 hist(lldt$pages, col = "skyblue", main = "Nombre de pàgines per llibre", xlab = "Pàgines" )
 
-# Anàlisis de la variable "awards" #
-
-award <- lldt$awards
-award_counts <- table(ifelse(award == "[]" | is.na(award), "No Awards", "With Awards"))
-
-barplot(award_counts, 
-        col = "lightblue", 
-        main = "Premis vs Sense Premis",
-        xlab = "Premis",
-        ylab = "Quantitat",
-        ylim = c(0, 50000))
-
-
