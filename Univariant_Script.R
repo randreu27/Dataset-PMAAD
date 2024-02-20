@@ -1,7 +1,7 @@
 ### Script D2 Llibres ###
 
 # Importació de les Dades #
-
+library(readr)
 lldt <- read_csv("https://raw.githubusercontent.com/randreu27/Dataset-PMAAD/main/llibres_with_setting.csv")
 
 View(lldt)
@@ -46,26 +46,13 @@ barplot(top_lang_freq,
         xlab = "Languages", 
         ylab = "Frequency")
 
-# Anàlisis de la variable "bookFormat" #
-
 format <- lldt$bookFormat
 head(format)
-
-# Calcular las frecuencias de los formatos
 format_freq <- table(format)
-
-
-# Calcular las frecuencias de los formatos
 format_freq <- table(format)
-
-# Crear el gráfico de barras
 barplot(format_freq, 
         col = c("lightblue", "lightgreen", "lightyellow", "lightcoral"), 
         main = "Distribución de Formatos",
         xlab = "Formato", 
         ylab = "Frecuencia",
         ylim = c(0, 30000))
-
-# Agregar etiquetas al gráfico
-text(x = barplot(format_freq), y = format_freq, labels = format_freq, pos = 3, col = "black", ylim = c(0, 30000))
-
