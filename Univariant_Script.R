@@ -2,7 +2,7 @@
 
 # Importació de les Dades #
 library(readr)
-lldt <- read_csv("https://raw.githubusercontent.com/randreu27/Dataset-PMAAD/main/llibres_with_setting.csv")
+hilldt <- read_csv("https://raw.githubusercontent.com/randreu27/Dataset-PMAAD/main/llibres_with_setting.csv")
 
 View(lldt)
 

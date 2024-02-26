@@ -47,21 +47,36 @@ ggplot(books, aes(x = pages, y = ratings)) +
   geom_point() +
   labs(x = 'Pàgines', y = 'Valoració', title = 'Pàgines VS Valoracions')
 
-# genres vs setting
+# genres vs ratings
 genres <- books$genres
-setting <- books$setting
+ratings <- books$rating
 
-library(vcd)
+genres <- unlist(genres)
 
-variable1 <- unlist(genres)
-variable2 <- unlist(setting)
+lengths_genres <- lengths(genres)
 
-min_length <- min(length(variable1), length(variable2))
-var1 <- variable1[1:min_length]
-var2 <- variable2[1:min_length]
+proporcion <- sum(lengths_genres) / length(ratings)
 
-# Creamos una tabla de contingencia
-contingency_table <- table(var1, var2)
+proporcion_redondeada <- round(proporcion)
 
-# Creamos el gráfico de mosaico
-mosaic(contingency_table, main = "Gèneres vs Localització")
+ratings_rep <- rep(ratings, proporcion_redondeada)
+
+ratings_rep <- ratings_rep[1:sum(lengths_genres)]
+
+
+data <- data.frame(Genre = genres, Rating = ratings_rep)
+
+library(dplyr)
+ratings_avg <- data %>%
+  group_by(Genre) %>%
+  summarize(Average_Rating = mean(Rating))
+
+ratings_avg <- ratings_avg[order(ratings_avg$Average_Rating, decreasing = TRUE), ]
+
+library(ggplot2)
+
+ggplot(ratings_avg, aes(x = reorder(Genre, Average_Rating), y = Average_Rating)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black", width = 2, position = position_dodge(width = 2)) +
+  geom_text(aes(label = round(Average_Rating, 2)), vjust = -0.5, size = 3.5, position = position_dodge(width = 0.7)) +
+  labs(x = "Género", y = "Calificación Promedio", title = "Calificación Promedio por Género") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje x para mejor visualización
