@@ -35,3 +35,33 @@ books$price <- as.numeric(books$price)
 # Neteja variables
 books$X <- NULL
 books$ratingsByStars <- NULL
+
+# Bivariate Analysis #
+# pages vs ratings
+pages <- books$pages
+ratings <- books$rating
+
+library(ggplot2)
+
+ggplot(books, aes(x = pages, y = ratings)) +
+  geom_point() +
+  labs(x = 'Pàgines', y = 'Valoració', title = 'Pàgines VS Valoracions')
+
+# genres vs setting
+genres <- books$genres
+setting <- books$setting
+
+library(vcd)
+
+variable1 <- unlist(genres)
+variable2 <- unlist(setting)
+
+min_length <- min(length(variable1), length(variable2))
+var1 <- variable1[1:min_length]
+var2 <- variable2[1:min_length]
+
+# Creamos una tabla de contingencia
+contingency_table <- table(var1, var2)
+
+# Creamos el gráfico de mosaico
+mosaic(contingency_table, main = "Gèneres vs Localització")
