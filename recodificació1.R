@@ -36,47 +36,20 @@ books$price <- as.numeric(books$price)
 books$X <- NULL
 books$ratingsByStars <- NULL
 
-# Bivariate Analysis #
-# pages vs ratings
-pages <- books$pages
-ratings <- books$rating
+# ELIMINACIÓ DE VARIABLES
 
-library(ggplot2)
+books$bookId <- NULL
+books$isbn <- NULL
+books$publisher <- NULL
+books$firstPublishDate <- NULL
+books$coverImg <-NULL
+books$author <- NULL
 
-ggplot(books, aes(x = pages, y = ratings)) +
-  geom_point() +
-  labs(x = 'Pàgines', y = 'Valoració', title = 'Pàgines VS Valoracions')
+# TRANSFORMACIÓ DE VARIABLES
+# Series
+books$Te_Serie <- ifelse(is.na(books$series), 0, 1)
+books$series <- NULL
 
-# genres vs ratings
-genres <- books$genres
-ratings <- books$rating
-
-genres <- unlist(genres)
-
-lengths_genres <- lengths(genres)
-
-proporcion <- sum(lengths_genres) / length(ratings)
-
-proporcion_redondeada <- round(proporcion)
-
-ratings_rep <- rep(ratings, proporcion_redondeada)
-
-ratings_rep <- ratings_rep[1:sum(lengths_genres)]
-
-
-data <- data.frame(Genre = genres, Rating = ratings_rep)
-
-library(dplyr)
-ratings_avg <- data %>%
-  group_by(Genre) %>%
-  summarize(Average_Rating = mean(Rating))
-
-ratings_avg <- ratings_avg[order(ratings_avg$Average_Rating, decreasing = TRUE), ]
-
-library(ggplot2)
-
-ggplot(ratings_avg, aes(x = reorder(Genre, Average_Rating), y = Average_Rating)) +
-  geom_bar(stat = "identity", fill = "skyblue", color = "black", width = 2, position = position_dodge(width = 2)) +
-  geom_text(aes(label = round(Average_Rating, 2)), vjust = -0.5, size = 3.5, position = position_dodge(width = 0.7)) +
-  labs(x = "Género", y = "Calificación Promedio", title = "Calificación Promedio por Género") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje x para mejor visualización
+# Awards
+books$Te_Premis <- sapply(books$awards, function(x) if (length(x) > 0) 1 else 0)
+books$awards <- NULL
