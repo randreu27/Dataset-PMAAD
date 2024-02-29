@@ -44,6 +44,8 @@ books$publisher <- NULL
 books$firstPublishDate <- NULL
 books$coverImg <-NULL
 books$author <- NULL
+books$characters <- NULL
+books$edition <- NULL
 
 # TRANSFORMACIÓ DE VARIABLES
 # Series
@@ -51,5 +53,42 @@ books$Te_Serie <- ifelse(is.na(books$series), 0, 1)
 books$series <- NULL
 
 # Awards
-books$Te_Premis <- sapply(books$awards, function(x) if (length(x) > 0) 1 else 0)
+num_awards = c()
+for (i in books$awards){
+  num = 0
+  for (elem in i){
+    num = num + 1
+  }
+  num_awards <- c(num_awards, num)
+}
+books$numAwards <- num_awards
 books$awards <- NULL
+
+# Genres
+genre_counts <- table(unlist(books$genres))
+
+popular_genres <- names(sort(genre_counts, decreasing = TRUE))[1:15]
+
+
+assigned_genres <- sapply(books$genres, function(genres) {
+  common_genre <- intersect(popular_genres, genres)
+  if (length(common_genre) > 0) {
+    return(common_genre[1])
+  } else {
+    return(NA)
+  }
+})
+books$popular_genre <- assigned_genres
+books$genres <- NULL
+
+# plot
+assigned_genres_df <- data.frame(Genre = assigned_genres)
+genre_counts <- table(assigned_genres_df$Genre)
+ggplot(data = assigned_genres_df, aes(x = Genre)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Distribución de géneros asignados",
+       x = "Género",
+       y = "Frecuencia") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
