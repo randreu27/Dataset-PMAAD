@@ -92,3 +92,4 @@ ggplot(data = assigned_genres_df, aes(x = Genre)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+saveRDS(books, file = "cleaned_Dataset.rds")
