@@ -1,5 +1,6 @@
 # Carregar DF
 library(readr)
+library(ggplot2)
 books <- read.csv("https://raw.githubusercontent.com/randreu27/Dataset-PMAAD/main/llibres_with_setting.csv")
 
 # Interpretació NA
@@ -92,4 +93,31 @@ ggplot(data = assigned_genres_df, aes(x = Genre)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-saveRDS(books, file = "cleaned_Dataset.rds")
+#saveRDS(books, file = "cleaned_Dataset.rds")
+
+# # # PREPOCESSING # # #
+# # Eliminació de NA no imputables # #
+books <- books[complete.cases(books$description), ]
+books <- books[complete.cases(books$language), ]
+books <- books[complete.cases(books$bookFormat), ]
+books <- books[complete.cases(books$publishDate), ]
+books <- books[complete.cases(books$popular_genre), ]
+
+# # Estudi de Imputabilitat de les variables restants # #
+#install.packages("naniar")
+library(naniar)
+
+# General #
+mcar_test(books[, c("rating", "pages", "numRatings", "likedPercent", "bbeScore", "bbeVotes", "price", "n5stars", "n4stars", "n3stars", "n2stars", "n1stars")])
+
+# Variable Pages # 
+mcar_test(books[, c("rating", "pages", "numRatings", "bbeScore", "bbeVotes")])
+
+# Variable likedPercent # 
+mcar_test(books[, c("rating", "numRatings", "likedPercent", "bbeScore", "bbeVotes")])
+
+# Variable price # 
+mcar_test(books[, c("rating", "numRatings", "bbeScore", "bbeVotes", "price")])
+
+# Variables nstars # 
+mcar_test(books[, c("rating", "numRatings", "bbeScore", "bbeVotes", "n5stars", "n4stars", "n3stars", "n2stars", "n1stars")])
