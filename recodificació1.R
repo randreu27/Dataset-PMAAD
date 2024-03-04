@@ -109,15 +109,3 @@ library(naniar)
 
 # General #
 mcar_test(books[, c("rating", "pages", "numRatings", "likedPercent", "bbeScore", "bbeVotes", "price", "n5stars", "n4stars", "n3stars", "n2stars", "n1stars")])
-
-# Variable Pages # 
-mcar_test(books[, c("rating", "pages", "numRatings", "bbeScore", "bbeVotes")])
-
-# Variable likedPercent # 
-mcar_test(books[, c("rating", "numRatings", "likedPercent", "bbeScore", "bbeVotes")])
-
-# Variable price # 
-mcar_test(books[, c("rating", "numRatings", "bbeScore", "bbeVotes", "price")])
-
-# Variables nstars # 
-mcar_test(books[, c("rating", "numRatings", "bbeScore", "bbeVotes", "n5stars", "n4stars", "n3stars", "n2stars", "n1stars")])
