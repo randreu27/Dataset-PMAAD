@@ -68,7 +68,7 @@ books$awards <- NULL
 # Genres
 genre_counts <- table(unlist(books$genres))
 
-popular_genres <- names(sort(genre_counts, decreasing = TRUE))[1:15]
+popular_genres <- names(sort(genre_counts, decreasing = TRUE))[1:20]
 
 
 assigned_genres <- sapply(books$genres, function(genres) {
@@ -100,3 +100,24 @@ library(naniar)
 
 # General #
 mcar_test(books[, c("rating", "pages", "numRatings", "likedPercent", "bbeScore", "bbeVotes", "price", "n5stars", "n4stars", "n3stars", "n2stars", "n1stars")])
+
+# Supongamos que tienes una lista llamada 'clases' con las 20 clases
+clases <- assigned_genres  # Aquí deberías poner tus clases
+
+# Calculamos las frecuencias de cada clase
+frecuencias <- table(clases)
+
+# Convertimos las frecuencias en un data frame
+data <- data.frame(Clase = names(frecuencias), Frecuencia = as.numeric(frecuencias))
+
+# Ordenamos el dataframe por frecuencia de forma descendente
+data <- data[order(-data$Frecuencia), ]
+
+# Cargamos la librería ggplot2
+library(ggplot2)
+
+# Creamos el gráfico de barras
+ggplot(data, aes(x = reorder(Clase, -Frecuencia), y = Frecuencia)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Clases", y = "Frecuencia", title = "Frecuencia de las clases")
