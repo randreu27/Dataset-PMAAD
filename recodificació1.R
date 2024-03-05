@@ -83,15 +83,6 @@ books$popular_genre <- assigned_genres
 books$genres <- NULL
 
 # plot
-assigned_genres_df <- data.frame(Genre = assigned_genres)
-genre_counts <- table(assigned_genres_df$Genre)
-ggplot(data = assigned_genres_df, aes(x = Genre)) +
-  geom_bar(fill = "skyblue", color = "black") +
-  labs(title = "Distribución de géneros asignados",
-       x = "Género",
-       y = "Frecuencia") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #saveRDS(books, file = "cleaned_Dataset.rds")
 
