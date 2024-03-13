@@ -92,7 +92,7 @@ books <- books[complete.cases(books$description), ]
 books <- books[complete.cases(books$language), ]
 books <- books[complete.cases(books$bookFormat), ]
 books <- books[complete.cases(books$publishDate), ]
-books <- books[complete.cases(books$popular_genre), ]
+#books <- books[complete.cases(books$popular_genre), ]
 
 # # Estudi de Imputabilitat de les variables restants # #
 #install.packages("naniar")
