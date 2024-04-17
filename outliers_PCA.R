@@ -249,6 +249,7 @@ for(k in 1:K){
   }
 }#endfor
 
+
 #descriptors de les classes més significatius. Afegir info qualits
 for (c in 1:length(levels(as.factor(P)))) {
   if(!is.na(levels(as.factor(P))[c])){
@@ -256,3 +257,4 @@ for (c in 1:length(levels(as.factor(P)))) {
     print(sort(pvalk[c,]), digits=3) 
   }
 }
+
