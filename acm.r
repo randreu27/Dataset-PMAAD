@@ -12,24 +12,13 @@ library("corrplot")
 ?MCA
 
 ### Exploring our dataset for the MCA example ###
-help(tea)
-data(tea)
-summary(tea)
-names(tea)
-####USES this loop to graph barplots about Categorical Data n=number
-### of feature you want to plot, here n=2 ###
-### These barplots are important to check if we have unbalanced data, i.e --> features
-### with many factors or features with high unbalanced data inside their factors that might put bias into the analysis
-### Remind that MCA is sensitive of categorical data structure.
-n=5
-for (i in 1:n) {
-  plot(tea[,i], main=colnames(tea)[i],
-       ylab = "Count", col="steelblue", las = 2)
-}
+data <- read.csv('llibres_imputat.csv')
+
+data <- data[, -c(1, 3, 7)]
 
 #MCA ANALYSIS by using LOGICAL TABLE
 
-res.mca0<-MCA(tea, quanti.sup=19, quali.sup=c(20:36),graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
+res.mca0<-MCA(data, quanti.sup=c(1, 4:11, 13:30), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
 ### categorical features are supplementary (features from columns 20 to 36)
 
 ##if you do not put graph=FALSE, all results and graphs are shown.### This option is good when you want quick results from MCA
