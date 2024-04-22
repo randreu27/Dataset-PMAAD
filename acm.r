@@ -44,17 +44,14 @@ mapeo <- data.frame(
 )
 
 # Ahora puedes unir tu base de datos 'df' con la tabla de correspondencia 'mapeo' utilizando la función merge():
-df <- merge(df, mapeo, by = "pais")
-
-# Ahora puedes unir tu base de datos 'df' con la tabla de correspondencia 'mapeo' utilizando la función merge():
 data <- merge(data, mapeo, by = "pais")
 
 
-data <- data[, -c(1, 3, 7)]
+data <- data[, -c(1, 2, 4, 8)]
 
 #MCA ANALYSIS by using LOGICAL TABLE
 
-res.mca0<-MCA(data, quanti.sup=c(1, 4:11, 13:30), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
+res.mca0<-MCA(data, quanti.sup=c(1, 4:29), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
 ### categorical features are supplementary (features from columns 20 to 36)
 
 ##if you do not put graph=FALSE, all results and graphs are shown.### This option is good when you want quick results from MCA
@@ -190,7 +187,7 @@ res.desc[[2]]
 ########
 ######## BY USING BURT TABLE#######################
 
-res.mca<-MCA(tea, quanti.sup=19, quali.sup=c(20:36), method="Burt")
+res.mca<-MCA(data, quanti.sup=c(1, 4:29), method="Burt")
 plot(res.mca,invisible=c("ind","quali.sup"), cex=0.5)
 plot(res.mca0,invisible=c("ind","quali.sup"), cex=0.5)
 
