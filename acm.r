@@ -14,6 +14,42 @@ library("corrplot")
 ### Exploring our dataset for the MCA example ###
 data <- read.csv('llibres_imputat.csv')
 
+# Crear un data frame con los países y sus correspondientes continentes
+mapeo <- data.frame(
+  pais = c("United States", "United Kingdom", "Germany", "France", "Japan", "Italy", "Morocco", "Russia", "Canada", "Romania", "Afghanistan", 
+           "Greece", "India", "Switzerland", "Sweden", "Monaco", "Ireland", "Catalonia", "Cuba", "Turkey", "Algeria", "Colombia", "Indonesia", 
+           "China", "Belgium", "Austria", "Poland", "Costa Rica", "Netherlands", "Spain", "Chile", "Israel", "Congo", "Nigeria", "South Africa", 
+           "Denmark", "New Zealand", "Mexico", "Ukraine", "Pakistan", "Nepal", "Ethiopia", "Egypt", "Slovenia", "Bahamas", "Australia", "Sierra Leone", 
+           "Norway", "Vietnam", "Portugal", "Peru", "Hong Kong", "Kenya", "Bosnia and Herzegovina", "Thailand", "Zimbabwe", "Iran", "Hungary", "Ecuador", 
+           "Somalia", "Malaysia", "Slovakia", "Argentina", "Brazil", "Taiwan", "Iceland", "North Korea", "Dominican Republic", "Singapore", "Mongolia", 
+           "Uzbekistan", "Uruguay", "Ghana", "South Korea", "Cambodia", "Myanmar", "Mali", "Rwanda", "Solomon Islands", "Tunisia", "Trinidad and Tobago", 
+           "Lebanon", "Kazakhstan", "Barbados", "Jamaica", "Malta", "Benin", "Bulgaria", "Iraq", "Finland", "Sri Lanka", "Honduras", "Estonia", "Sudan", 
+           "Bolivia", "Palestine", "Philippines", "Albania", "Bahrain", "Libya", "Saint Kitts and Nevis", "Central African Republic", "Fiji", "Papua New Guinea", 
+           "Panama", "Oman", "Andorra", "Azerbaijan", "Malawi", "Saint Lucia", "Saudi Arabia", "Togo", "Haiti", "Kuwait", "Bangladesh", "Venezuela", 
+           "Yemen", "Botswana", "Antigua and Barbuda", "Syria", "Guatemala", "Lithuania", "Tanzania", "Liberia", "Equatorial Guinea", "Armenia", 
+           "Guinea", "Eritrea", "Nicaragua", "Kiribati", "Cyprus", "Croatia", "Latvia", "Namibia", "Senegal", "United Arab Emirates", "Cameroon", 
+           "Lesotho", "Micronesia", "Bhutan"),
+  
+  continente = c("North America", "Europe", "Europe", "Europe", "Asia", "Europe", "Africa", "Europe", "North America", "Europe", "Asia", "Europe", 
+                 "Asia", "Europe", "Europe", "Europe", "Europe", "Europe", "North America", "Asia", "Africa", "South America", "Asia", "Asia", "Europe", 
+                 "Europe", "Europe", "North America", "Europe", "Europe", "South America", "Asia", "Africa", "Africa", "Africa", "Europe", "Oceania", 
+                 "North America", "Europe", "Asia", "Asia", "Africa", "Africa", "Europe", "North America", "Oceania", "Africa", "Europe", "Asia", "Europe", 
+                 "South America", "Asia", "Africa", "Europe", "Asia", "Africa", "Asia", "Europe", "South America", "Africa", "Asia", "Europe", "South America", 
+                 "South America", "Asia", "Europe", "Asia", "North America", "Asia", "Asia", "Asia", "South America", "Africa", "Asia", "Asia", "Asia", 
+                 "Africa", "Africa", "Oceania", "Africa", "North America", "Asia", "Asia", "North America", "North America", "Europe", "Africa", "Europe", 
+                 "Asia", "Europe", "Africa", "Asia", "Europe", "Asia", "North America", "Europe", "Africa", "Europe", "Asia", "Africa", "Africa", "Oceania", 
+                 "Oceania", "North America", "Asia", "Europe", "Asia", "Africa", "North America", "Asia", "Asia", "Africa", "North America", "Asia", "North America", 
+                 "Asia", "Africa", "Africa", "Africa", "Africa", "Asia", "Africa", "Africa", "North America", "Oceania", "Asia", "Europe", "Europe", "Africa", "Africa", 
+                 "Asia", "Africa", "Africa", "Oceania", "Asia", "Asia", "Africa", "Africa", "Oceania", "Asia")
+)
+
+# Ahora puedes unir tu base de datos 'df' con la tabla de correspondencia 'mapeo' utilizando la función merge():
+df <- merge(df, mapeo, by = "pais")
+
+# Ahora puedes unir tu base de datos 'df' con la tabla de correspondencia 'mapeo' utilizando la función merge():
+data <- merge(data, mapeo, by = "pais")
+
+
 data <- data[, -c(1, 3, 7)]
 
 #MCA ANALYSIS by using LOGICAL TABLE
