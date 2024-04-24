@@ -88,8 +88,11 @@ sum(res.mca0$ind$contrib[,1])
 
 ### GRAPHICAL ANALYSIS - BIPLOTS
 ### BIPLOT
-fviz_mca_biplot(res.mca0,repel = TRUE, # Avoid text overlapping (slow if many point)
-                ggtheme = theme_minimal())
+
+#fviz_mca_biplot(res.mca0,repel = TRUE, # Avoid text overlapping (slow if many point)
+#                ggtheme = theme_minimal())
+
+
 #The plot above shows a global pattern within the data. Rows (individuals) are represented
 # by blue points and columns (variable categories) by red triangles
 # The distance between any row points or column points gives a measure of their similarity
