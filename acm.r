@@ -9,7 +9,6 @@ library(FactoMineR)
 library(Matrix)
 library(factoextra)
 library("corrplot")
-?MCA
 
 ### Exploring our dataset for the MCA example ###
 data <- read.csv('llibres_imputat.csv')
@@ -43,15 +42,49 @@ mapeo <- data.frame(
                  "Asia", "Africa", "Africa", "Oceania", "Asia", "Asia", "Africa", "Africa", "Oceania", "Asia")
 )
 
+leguatges_min <- data.frame(
+# Crear un vector con los idiomas
+  language = c("English", "Portuguese", "Polish", "German", "Arabic", "French", 
+                 "Italian", "Spanish", "Armenian", "Bokmål, Norwegian; Norwegian Bokmål", 
+                 "Indonesian", "Bengali", "Dutch", "Turkish", "Bulgarian", "Vietnamese", 
+                 "Chinese", "Croatian", "Danish", "Finnish", "Estonian", "Amharic", 
+                 "Persian", "Czech", "Romanian", "Multiple languages", "Greek, Modern (1453-)", 
+                 "Greek, Ancient (to 1453)", "Hungarian", "Icelandic", "Georgian", 
+                 "Malayalam", "Tamil", "Marathi", "Farsi", "Japanese", "Malay", "Urdu", 
+                 "Slovak", "Norwegian", "Duala", "Filipino; Pilipino", "Latvian", 
+                 "Russian", "Swedish", "Ukrainian", "English, Middle (1100-1500)"),
+  
+  # Crear un vector con los tipos de lengua correspondientes
+  language_types = c("Germanic", "Romance", "Slavic", "Germanic", "Other", "Romance", 
+                      "Romance", "Romance", "Indo-European", "Germanic", "Asiatic", 
+                      "Indo-European", "Germanic", "Indo-European", "Slavic", "Asiatic", 
+                      "Asiatic", "Slavic", "Germanic", "Indo-European", "Indo-European", "Asiatic", 
+                      "Indo-European", "Slavic", "Romance", "Other", "Indo-European", 
+                      "Indo-European", "Indo-European", "Germanic", "Other", "Other", 
+                      "Other", "Indo-European", "Indo-European", "Asiatic", "Asiatic", 
+                      "Indo-European", "Slavic", "Germanic", "Other", "Asiatic", 
+                      "Slavic", "Indo-European", "Germanic", "Indo-European", "Germanic")
+)
+
+
+# Definir los intervalos
+breaks <- c(0, 25, 50, 75, 100)
+labels1 <- c('Agrada Poc', 'Agrada', 'Agrada Bastant', 'Agrada Molt')
+
+# Discretizar la variable
+data$likedPercent <- cut(data$likedPercent, breaks = breaks, labels = labels1, include.lowest = TRUE)
+
+
 # Ahora puedes unir tu base de datos 'df' con la tabla de correspondencia 'mapeo' utilizando la función merge():
 data <- merge(data, mapeo, by = "pais")
+data <- merge(data, leguatges_min, by = "language")
 
 
-data <- data[, -c(1, 2, 4, 8)]
+data <- data[, -c(1, 2, 3, 5, 8, 16:33)]
 
 #MCA ANALYSIS by using LOGICAL TABLE
 
-res.mca0<-MCA(data, quanti.sup=c(1, 4:29), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
+res.mca0<-MCA(data, quanti.sup=c(1, 3, 4, 6:10), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
 ### categorical features are supplementary (features from columns 20 to 36)
 
 ##if you do not put graph=FALSE, all results and graphs are shown.### This option is good when you want quick results from MCA
@@ -88,8 +121,11 @@ sum(res.mca0$ind$contrib[,1])
 
 ### GRAPHICAL ANALYSIS - BIPLOTS
 ### BIPLOT
-fviz_mca_biplot(res.mca0,repel = TRUE, # Avoid text overlapping (slow if many point)
-                ggtheme = theme_minimal())
+
+#fviz_mca_biplot(res.mca0,repel = TRUE, # Avoid text overlapping (slow if many point)
+#                ggtheme = theme_minimal())
+
+
 #The plot above shows a global pattern within the data. Rows (individuals) are represented
 # by blue points and columns (variable categories) by red triangles
 # The distance between any row points or column points gives a measure of their similarity
