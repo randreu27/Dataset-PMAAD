@@ -68,7 +68,7 @@ leguatges_min <- data.frame(
 
 
 # Definir los intervalos
-breaks <- c(0, 25, 50, 75, 100)
+breaks <- c(0, 85, 90, 95, 100)
 labels1 <- c('Agrada Poc', 'Agrada', 'Agrada Bastant', 'Agrada Molt')
 
 # Discretizar la variable
@@ -101,7 +101,7 @@ data <- merge(data, si_no1, by = "granEditorial")
 data <- merge(data, si_no2, by = "esSerie")
 data <- merge(data, si_no3, by = "teAwards")
 
-data <- data[, -c(1, 2, 3)]
+data <- data[, -c(1, 2, 3, 12)]
 
 #MCA ANALYSIS by using LOGICAL TABLE
 
