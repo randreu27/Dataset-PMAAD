@@ -82,9 +82,30 @@ data <- merge(data, leguatges_min, by = "language")
 
 data <- data[, -c(1, 2, 3, 5, 8, 16:33)]
 
+si_no1 <- data.frame(
+  granEditorial = c(0 , 1),
+  granEditorial_ = c('no_g_editorial', 'si_g_editorial')
+)
+
+si_no2 <- data.frame(
+  esSerie = c(0 , 1),
+  esSerie_ = c('no_serie', 'si_serie')
+)
+
+si_no3 <- data.frame(
+  teAwards = c(0 , 1),
+  teAwards_ = c('no_premi', 'si_premi')
+)
+
+data <- merge(data, si_no1, by = "granEditorial")
+data <- merge(data, si_no2, by = "esSerie")
+data <- merge(data, si_no3, by = "teAwards")
+
+data <- data[, -c(1, 2, 3)]
+
 #MCA ANALYSIS by using LOGICAL TABLE
 
-res.mca0<-MCA(data, quanti.sup=c(1, 3, 4, 6:10), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
+res.mca0<-MCA(data, quanti.sup=c(1, 3, 4, 6, 7), graph=FALSE) ### this MCA contains 18 active variables, an additional variable (19) as numerical and the rest of
 ### categorical features are supplementary (features from columns 20 to 36)
 
 ##if you do not put graph=FALSE, all results and graphs are shown.### This option is good when you want quick results from MCA
