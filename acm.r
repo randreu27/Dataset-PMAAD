@@ -244,7 +244,7 @@ res.desc[[2]]
 ########
 ######## BY USING BURT TABLE#######################
 
-res.mca<-MCA(data, quanti.sup=c(1, 4:29), method="Burt")
+res.mca<-MCA(data, quanti.sup=c(1, 3, 4, 6, 7), method="Burt")
 plot(res.mca,invisible=c("ind","quali.sup"), cex=0.5)
 plot(res.mca0,invisible=c("ind","quali.sup"), cex=0.5)
 
