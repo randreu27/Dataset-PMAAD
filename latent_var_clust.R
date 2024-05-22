@@ -8,7 +8,10 @@
 data <- read.csv('llibres_imputat.csv')
 
 # AGAFEM LES VARIABLES NUMÈRIQUES
-data_num <-data[, -c(1,3,4,5, 7, 12:64)]
+data_num <- data[, -c(1,3,4,5, 7, 12:64)]
+
+data_num <- scale(data_num)
+
 
 # Creem el PCA
 pca <- prcomp(data_num)
@@ -36,7 +39,7 @@ barplot(pinerEix)
 
 # SELECTION OF THE SINGIFICNT DIMENSIONS (keep 80% of total inertia)
 
-nd = 6
+nd = 3
 
 print(pca)
 attributes(pca)
@@ -56,16 +59,16 @@ Psi[2000,]
 # STORAGE OF LABELS FOR INDIVIDUALS AND VARIABLES
 
 iden = row.names(data_num)
-etiq = names(data_num)
+etiq = c("rating", "pages", "numRatings", "likedPercent", "bbeVotes", "price")
 ze = rep(0,length(etiq)) # WE WILL NEED THIS VECTOR AFTERWARDS FOR THE GRAPHICS
 
 # PLOT OF INDIVIDUALS
 
 #select your axis
 #eje1<-2
-eje1<-1
+eje1<-2
 #eje2<-3
-eje2<-2
+eje2<-3
 
 plot(Psi[,eje1],Psi[,eje2])
 text(Psi[,eje1],Psi[,eje2],labels=iden, cex=0.5)
@@ -83,6 +86,15 @@ axis(side=2, pos= 0, labels = F, col="cyan")
 axis(side=4, pos= 0, labels = F, col="cyan")
 #library(rgl)
 #plot3d(Psi[,1],Psi[,2],Psi[,3])
+
+biplot(pca, xlim = c(-5, 5), ylim = c(-5, 5), scale = 0, col = c(5,1))
+biplot(pca, choices = c(2,3), xlim = c(-5, 5), ylim = c(-5, 5), scale = 0, col = c(5,1))
+biplot(pca, choices = c(1,3), xlim = c(-5, 5), ylim = c(-5, 5), scale = 0, col = c(5,1))
+
+
+
+
+
 
 #Projection of variables
 

@@ -1,0 +1,286 @@
+---
+title: ''
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Introducció del dataset de manera automàtica
+
+```{r}
+library(readr)
+mk_cmp <- read_csv("https://raw.githubusercontent.com/randreu27/Dataset-ME/main/mksubset.csv")
+```
+TAKE OUT ID VARIABLE
+
+```{r}
+mk_cmp1 <- subset(mk_cmp, select = -ID)
+```
+
+CREATION OF THE DATA FRAME OF CONTINUOUS VARIABLES
+
+```{r}
+attach(mk_cmp1)
+names(mk_cmp1)
+```
+
+Is R undestanding well my factor variables?
+
+```{r}
+sapply(mk_cmp1, class)
+```
+
+Set a list of numerical variables (with no missing values):
+
+```{r}
+numeriques <- which(sapply(mk_cmp1, is.numeric))
+
+dcon <- mk_cmp1[,numeriques]
+sapply(dcon, class)
+```
+
+PRINCIPAL COMPONENT ANALYSIS OF dcon
+
+```{r}
+pc1 <- prcomp(dcon, scale = TRUE)
+class(pc1)
+attributes(pc1)
+
+print(pc1)
+
+str(pc1)
+```
+
+WHICH PERCENTAGE OF THE TOTAL INERTIA IS REPRESENTED IN SUBSPACES?
+
+```{r}
+pc1$sdev
+innerProj<- pc1$sdev^2 
+innerProj
+totalInner<- sum(innerProj)
+totalInner
+pinerEix<- 100*innerProj/totalInner
+pinerEix
+barplot(pinerEix)
+```
+
+Accumulated Inertia in sub-spaces, from first principal component to the 23th dimension subspace:
+
+```{r}
+barplot(100*cumsum(pc1$sdev[1:dim(dcon)[2]]^2)/dim(dcon)[2])
+percInerAccum<-100*cumsum(pc1$sdev[1:dim(dcon)[2]]^2)/dim(dcon)[2]
+percInerAccum
+```
+
+SELECTION OF THE SINGIFICNT DIMENSIONS (keep 80% of total inertia)
+
+```{r}
+nd = 11
+
+print(pc1)
+attributes(pc1)
+pc1$rotation
+```
+
+STORAGE OF THE EIGENVALUES, EIGENVECTORS AND PROJECTIONS IN THE nd DIMENSIONS
+
+```{r}
+View(pc1$x)
+dim(pc1$x)
+dim(dcon)
+dcon[2000,]
+pc1$x[2000,]
+
+Psi = pc1$x[,1:nd]
+dim(Psi)
+Psi[2000,]
+```
+STORAGE OF LABELS FOR INDIVIDUALS AND VARIABLES
+
+```{r}
+iden = row.names(dcon)
+etiq = names(dcon)
+ze = rep(0,length(etiq)) # WE WILL NEED THIS VECTOR AFTERWARDS FOR THE GRAPHICS
+```
+
+PLOT OF INDIVIDUALS
+
+```{r}
+#select your axis
+#eje1<-2
+eje1<-2
+#eje2<-3
+eje2<-3
+
+plot(Psi[,eje1],Psi[,eje2])
+text(Psi[,eje1],Psi[,eje2],labels=iden, cex=0.5)
+axis(side=1, pos= 0, labels = F, col="cyan")
+axis(side=3, pos= 0, labels = F, col="cyan")
+axis(side=2, pos= 0, labels = F, col="cyan")
+axis(side=4, pos= 0, labels = F, col="cyan")
+
+plot(Psi[,eje1],Psi[,eje2], type="n")
+text(Psi[,eje1],Psi[,eje2],labels=iden, cex=0.5)
+axis(side=1, pos= 0, labels = F, col="cyan")
+axis(side=3, pos= 0, labels = F, col="cyan")
+axis(side=2, pos= 0, labels = F, col="cyan")
+axis(side=4, pos= 0, labels = F, col="cyan")
+
+library(rgl)
+plot3d(Psi[,1],Psi[,2],Psi[,3])
+```
+
+Projection of variables
+
+```{r}
+Phi = cor(dcon,Psi)
+View(Phi)
+```
+
+Select your axis
+
+```{r}
+X<-Phi[,eje1]
+Y<-Phi[,eje2]
+
+
+
+plot(Psi[,eje1],Psi[,eje2],type="n")
+axis(side=1, pos= 0, labels = F)
+axis(side=3, pos= 0, labels = F)
+axis(side=2, pos= 0, labels = F)
+axis(side=4, pos= 0, labels = F)
+arrows(ze, ze, X, Y, length = 0.07,col="blue")
+text(X,Y,labels=etiq,col="darkblue", cex=0.7)
+
+#zooms
+plot(Psi[,eje1],Psi[,eje2],type="n",xlim=c(min(X,0),max(X,0)), ylim=c(-0.7,1))
+axis(side=1, pos= 0, labels = F)
+axis(side=3, pos= 0, labels = F)
+axis(side=2, pos= 0, labels = F)
+axis(side=4, pos= 0, labels = F)
+arrows(ze, ze, X, Y, length = 0.07,col="blue")
+text(X,Y,labels=etiq,col="darkblue", cex=0.7)
+
+
+biplot(pc1, ylim  = c(-5, 5), scale = 0, col = c(5,1))
+```
+
+PROJECTION OF ILLUSTRATIVE qualitative variables on individuals' map
+PROJECTION OF INDIVIDUALS DIFFERENTIATING THE Response
+(we need a numeric Response to color)
+
+```{r}
+varcat = factor(as.matrix(mk_cmp1[,2]))
+plot(Psi[,1],Psi[,2],col=varcat)
+axis(side=1, pos= 0, labels = F, col="darkgray")
+axis(side=3, pos= 0, labels = F, col="darkgray")
+axis(side=2, pos= 0, labels = F, col="darkgray")
+axis(side=4, pos= 0, labels = F, col="darkgray")
+legend("bottomleft",levels(factor(varcat)),pch=1,col=c(1,2,3,4,5), cex=0.6)
+```
+
+Select your qualitative variable
+
+```{r}
+k <- 26 #response in mk_subset1
+
+varcat<-factor(as.matrix(mk_cmp1[,k]))
+fdic1 = tapply(Psi[,eje1],varcat,mean)
+fdic2 = tapply(Psi[,eje2],varcat,mean) 
+
+
+#Now we project both cdgs of levels of a selected qualitative variable without
+#representing the individual anymore
+
+plot(Psi[,eje1],Psi[,eje2],type="n", xlim=c(-1,1), ylim=c(-1,3))
+axis(side=1, pos= 0, labels = F, col="cyan")
+axis(side=3, pos= 0, labels = F, col="cyan")
+axis(side=2, pos= 0, labels = F, col="cyan")
+axis(side=4, pos= 0, labels = F, col="cyan")
+
+#points(fdic1,fdic2,pch=16,col="blue", labels=levels(varcat))
+text(fdic1,fdic2,labels=levels(varcat),col="black", cex=0.7)
+```
+
+Nominal Qualitative Variables:
+
+```{r}
+dcat <- c(2,3)
+
+colors <- c("coral1", "#FF6EB4", "paleturquoise1", "darkolivegreen2")
+
+plot(Psi[,eje1],Psi[,eje2],type="n",xlim=c(-0.7,1), ylim=c(-0.5,0.7))
+#plot(X,Y,type="none",xlim=c(min(X,0),max(X,0)))
+axis(side=1, pos= 0, labels = F, col="cyan")
+axis(side=3, pos= 0, labels = F, col="cyan")
+axis(side=2, pos= 0, labels = F, col="cyan")
+axis(side=4, pos= 0, labels = F, col="cyan")
+
+#add projections of numerical variables in background
+arrows(ze, ze, X, Y, length = 0.07,col="lightgray")
+text(X,Y,labels=etiq,col="gray", cex=0.7)
+
+c<-1
+for(k in dcat){
+  seguentColor<-colors[c]
+  fdic1 = tapply(Psi[,eje1],mk_cmp1[,k],mean)
+  fdic2 = tapply(Psi[,eje2],mk_cmp1[,k],mean)
+  
+  text(fdic1,fdic2,labels=levels(factor(as.matrix(mk_cmp1[,k]))),col=seguentColor, cex=0.6)
+  c<-c+1
+}
+legend("bottomleft",names(mk_cmp1)[dcat],pch=1,col=colors, cex=0.6)
+
+fm=20
+
+c<-1
+for(k in dcat){
+  seguentColor<-colors[c]
+  
+  fdic1 = tapply(Psi[,eje1],mk_cmp1[,k],mean)
+  fdic2 = tapply(Psi[,eje2],mk_cmp1[,k],mean) 
+  
+  #points(fdic1,fdic2,pch=16,col=seguentColor, labels=levels(dd[,k]))
+  text(fdic1,fdic2,labels=levels(factor(as.matrix(mk_cmp1[,k]))),col=seguentColor, cex=0.6)
+  c<-c+1
+}
+legend("bottomleft",names(mk_cmp1)[dcat],pch=1,col=colors, cex=0.6)
+
+
+```
+PROJECTION OF ILLUSTRATIVE qualitative variables on individuals' map
+PROJECCIÓ OF INDIVIDUALS DIFFERENTIATING THE Response
+(we need a numeric Response to color)
+
+```{r}
+ind <- c(1:10)
+
+for (i in ind) {
+  jnd <- c(1:10)
+  
+  for (j in jnd) {
+    if(i != j){
+      if (i < j){
+        varcat=factor(as.matrix(mk_cmp1[,26]))
+plot(Psi[,i],Psi[,j],col=varcat, xlab = colnames(i), ylab = colnames(j))
+axis(side=1, pos= 0, labels = F, col="darkgray")
+axis(side=3, pos= 0, labels = F, col="darkgray")
+axis(side=2, pos= 0, labels = F, col="darkgray")
+axis(side=4, pos= 0, labels = F, col="darkgray")
+legend("bottomleft",levels(varcat),pch=1,col=c(1,2), cex=0.6)
+
+
+# Overproject THE CDG OF  LEVELS OF varcat
+fdic1 = tapply(Psi[,i],varcat,mean)
+fdic2 = tapply(Psi[,j],varcat,mean) 
+
+text(fdic1,fdic2,labels=levels(factor(varcat)),col="cyan", cex=0.75)
+      }
+    }
+  }
+}
+```
+1,3 3,2 
