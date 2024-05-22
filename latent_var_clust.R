@@ -12,7 +12,6 @@ data_num <- data[, -c(1,3,4,5, 7, 12:64)]
 
 data_num <- scale(data_num)
 
-
 # Creem el PCA
 pca <- prcomp(data_num)
 
