@@ -111,13 +111,17 @@ c3[1:20]
 table(c4)
 table(c3)
 table(c4,c3)
+data$c4 <- c4
+
+llibres_clase <- data[, c('title', 'c4')]
 
 # PLOT OF THE INDIVIDUALS
 library(ggplot2)
-c3 <- as.factor(c3)
+c4 <- as.factor(c4)
 
 # Añadimos 'c3' a 'dcon'
-dcon$c3 <- c3
+dcon$c4 <- c4
+data$c4 <- c4
 
 # Creamos una lista con los nombres de las variables
 #variables <- c("rating", "pages", "bbeVotes", "price")
@@ -129,7 +133,7 @@ combinaciones <- combn(variables, 2, simplify = FALSE)
 
 # Para cada par de variables, creamos un gráfico
 for (par in combinaciones) {
-  p <- ggplot(dcon, aes_string(x = par[1], y = par[2], color = "c3")) +
+  p <- ggplot(dcon, aes_string(x = par[1], y = par[2], color = "c4")) +
     geom_point(alpha = 0.6, size = 2) +
     labs(color = "Cluster") +
     theme_minimal() +
