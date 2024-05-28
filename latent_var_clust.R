@@ -11,6 +11,7 @@ data <- read.csv('llibres_imputat.csv')
 
 # AGAFEM LES VARIABLES NUMÈRIQUES
 data_num <- data[, -c(1,3,4,5, 7, 12:64)]
+llibres <- data[, -c(1, 3, 7)]
 
 data_num <- scale(data_num)
 
@@ -31,7 +32,7 @@ pinerEix<- 100*innerProj/totalInner
 pinerEix
 barplot(pinerEix)
 
-# SELECTION OF THE SINGIFICNT DIMENSIONS (keep 80% of total inertia)
+# SELECTION OF THE SIGIFICANT DIMENSIONS (keep 80% of total inertia)
 
 nd = 3
 
@@ -79,7 +80,7 @@ h1 <- hclust(d,method="ward.D")  # NOTICE THE COST
 plot(h1)
 
 d  <- dist(dcon)
-h1 <- hclust(d,method="ward")  # NOTICE THE COST
+h1 <- hclust(d,method="ward.D")  # NOTICE THE COST
 plot(h1)
 
 # BUT WE ONLY NEED WHERE THERE ARE THE LEAPS OF THE HEIGHT
@@ -109,6 +110,25 @@ c3[1:20]
 
 
 table(c4)
+
+library(ggplot2)
+
+
+freq_c4 <- data.frame(
+  R = c("Bestseller", "Destacats", "Adaptacions", "Nínxol"),
+  Freq = c(161, 784, 1966, 7356)
+)
+
+freq_c4$R <- factor(freq_c4$R, levels = freq_c4$R)
+
+# Crea el countplot
+ggplot(freq_c4, aes(x = R, y = Freq)) +
+  geom_bar(fill = "skyblue", color = "black", stat = "identity") +
+  labs(title = "Classes vs freqüència", x = "Classe", y = "Freqüència") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
 table(c3)
 table(c4,c3)
 data$c4 <- c4
@@ -192,7 +212,11 @@ par(ask=TRUE)
 
 #P must contain the class variable
 #P<-dd[,3]
-P<-c3
+P<-c4
+nous_nivells <- c("Bestseller", "Destacats", "Adaptacions", "Nínxol")
+
+# Canvia els nivells del vector P
+P <- factor(P, levels = 1:4, labels = nous_nivells)
 #P<-dd[,18]
 nameP<-"classe"
 #P<-df[,33]
@@ -333,3 +357,73 @@ for (c in 1:length(levels(as.factor(P)))) {
     print(sort(pvalk[c,]), digits=3) 
   }
 }
+
+
+
+
+library(dplyr)
+library(tidyr)
+
+# Seleccionar les columnes de gènere i la columna de classe
+genre_columns <- names(llibres)[14:64]
+class_column <- "c4"
+
+# Agregar les dades per classe i gènere
+genre_freq <- llibres %>%
+  select(starts_with("Genre"), all_of(class_column)) %>%
+  group_by_at(vars(all_of(class_column))) %>%
+  summarise(across(starts_with("Genre"), sum)) %>%
+  pivot_longer(cols = starts_with("Genre"), names_to = "Genre", values_to = "Freq")
+
+
+# Primer, calculem la proporció de cada gènere a cada nivell de 'c4'
+genre_proportions <- genre_freq %>%
+  group_by(c4) %>%
+  mutate(Total = sum(Freq)) %>%
+  ungroup() %>%
+  mutate(Proportion = Freq / Total) %>%
+  filter(Freq >= 10) # Filtrar per evitar outliers
+
+# Calculem la proporció mitjana de cada gènere entre tots els nivells de 'c4'
+average_genre_proportions <- genre_proportions %>%
+  group_by(Genre) %>%
+  summarise(AverageProportion = mean(Proportion)) %>%
+  ungroup()
+
+# Calculem la proporció de sobrerepresentació per cada gènere a cada nivell
+sobrerepresentacio <- genre_proportions %>%
+  left_join(average_genre_proportions, by = "Genre") %>%
+  mutate(Sobrerepresentacio = Proportion / AverageProportion)
+
+# Ara, calculem la mitjana entre la proporció normal i la sobrerepresentació
+sobrerepresentacio <- sobrerepresentacio %>%
+  mutate(AverageScore = (Proportion + Sobrerepresentacio) / 5)
+
+# Seleccionem els 5 gèneres més rellevants per cada classe, basats en l'AverageScore
+top_genres_per_class <- sobrerepresentacio %>%
+  group_by(c4) %>%
+  top_n(5, AverageScore) %>%
+  ungroup() %>%
+  arrange(c4, desc(AverageScore))
+
+# Creem un gràfic per cada classe
+# Continuem creant un gràfic per cada classe
+plots <- list()
+for(c4_level in unique(top_genres_per_class$c4)) {
+  plots[[as.character(c4_level)]] <- ggplot(top_genres_per_class %>% filter(c4 == c4_level), aes(x = reorder(Genre, AverageScore), y = AverageScore, fill = Genre)) +
+    geom_bar(stat = "identity") +
+    labs(title = paste("Top 5 Gèneres a", nous_nivells[strtoi(c4_level)]),
+         x = "Genre",
+         y = "Average Score") +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    coord_flip() # Gira el gràfic per a millorar la legibilitat
+}
+
+# Imprimim els gràfics
+for(c4_level in names(plots)) {
+  print(plots[[c4_level]])
+}
+
+
+
